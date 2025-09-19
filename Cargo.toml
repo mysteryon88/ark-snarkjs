@@ -8,7 +8,7 @@ license = "MIT"
 repository = "https://github.com/mysteryon88/ark-to-snarkjs"
 homepage = "https://github.com/mysteryon88/ark-to-snarkjs"
 readme = "README.md"
-keywords = ["arkworks", "zk", "groth16", "snarkjs", "bn254", "bls12-381"]
+keywords = ["arkworks", "zk", "groth16", "snarkjs"]
 categories = ["cryptography", "encoding", "algorithms"]
 resolver = "2"
 
