@@ -1,0 +1,38 @@
+[package]
+name = "ark_snarkjs"
+version = "0.1.0"
+edition = "2024"                
+authors = ["Sergey Sobolev"]
+description = "Rust library for exporting Arkworks Groth16 proofs and verifying keys into snarkjs-compatible JSON (BN254, BLS12-381)."
+license = "MIT"
+repository = "https://github.com/mysteryon88/ark-to-snarkjs"
+homepage = "https://github.com/mysteryon88/ark-to-snarkjs"
+readme = "README.md"
+keywords = ["arkworks", "zk", "groth16", "snarkjs", "bn254", "bls12-381"]
+categories = ["cryptography", "encoding", "algorithms"]
+resolver = "2"
+
+include = [
+  "src/**",
+  "README.md",
+  "LICENSE*",
+  "Cargo.toml",
+]
+
+[dependencies]
+ark-bls12-381 = "0.5.0"
+ark-bn254 = "0.5.0"
+ark-ec = "0.5.0"
+ark-ff = "0.5.0"
+ark-groth16 = "0.5.0"
+ark-std = "0.5.0"
+num-bigint = "0.4.6"
+serde = { version = "1.0.225", features = ["derive"] } 
+serde_json = "1.0.145"
+
+[dev-dependencies]
+ark-crypto-primitives = "0.5.0"
+ark-r1cs-std = "0.5.0"
+ark-relations = "0.5.1"
+ark-snark = "0.5.1"
+
