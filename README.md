@@ -1,4 +1,4 @@
-# <h1 align="center"> ark-to-snarkjs </h1>
+# <h1 align="center"> ark-snarkjs </h1>
 
 Utilities for exporting [arkworks](https://arkworks.rs/) proofs and verifying keys into a format compatible with [snarkjs](https://github.com/iden3/snarkjs).
 Currently supports **Groth16** on curves **BN254** and **BLS12-381**.
