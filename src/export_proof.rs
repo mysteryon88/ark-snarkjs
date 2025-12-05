@@ -10,12 +10,12 @@ use crate::snarkjs_common::{AsFp2, CurveTag, f_to_dec, g1_xy, g2_xyxy};
 /// JSON structure for Groth16 proof in `snarkjs`-compatible format.
 #[derive(Serialize)]
 pub struct ProofJson {
-    pub protocol: &'static str,      // always "groth16"
-    pub curve: &'static str,         // "bn128" or "bls12381"
-    pub pi_a: [String; 3],           // G1 point [x, y, 1]
-    pub pi_b: [[String; 2]; 3],      // G2 point [[x0, x1], [y0, y1], [1, 0]]
-    pub pi_c: [String; 3],           // G1 point [x, y, 1]
-    pub public_signals: Vec<String>, // array of decimal-encoded public inputs
+    pub protocol: &'static str,     // always "groth16"
+    pub curve: &'static str,        // "bn128" or "bls12381"
+    pub pi_a: [String; 3],          // G1 point [x, y, 1]
+    pub pi_b: [[String; 2]; 3],     // G2 point [[x0, x1], [y0, y1], [1, 0]]
+    pub pi_c: [String; 3],          // G1 point [x, y, 1]
+    pub publicSignals: Vec<String>, // array of decimal-encoded public inputs
 }
 
 /// Export a Groth16 proof and its public signals to `snarkjs` JSON format.
@@ -51,7 +51,7 @@ where
             ["1".to_string(), "0".to_string()],
         ],
         pi_c: [c[0].clone(), c[1].clone(), "1".to_string()],
-        public_signals,
+        publicSignals: public_signals,
     };
 
     // Ensure parent directories exist
