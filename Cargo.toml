@@ -1,6 +1,6 @@
 [package]
 name = "ark-snarkjs"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"                
 authors = ["Sergey Sobolev"]
 description = "Rust library for exporting Arkworks Groth16 proofs and verifying keys into snarkjs-compatible JSON (BN254, BLS12-381)."
