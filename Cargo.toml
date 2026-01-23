@@ -3,12 +3,12 @@ name = "ark-snarkjs"
 version = "0.1.2"
 edition = "2024"                
 authors = ["Sergey Sobolev"]
-description = "Rust library for exporting Arkworks Groth16 proofs and verifying keys into snarkjs-compatible JSON (BN254, BLS12-381)."
+description = "Rust library for exporting Arkworks Groth16 proofs and verifying keys into snarkjs-compatible JSON (BN254, BLS12-381), as well as garaga-compatible format."
 license = "MIT"
 repository = "https://github.com/mysteryon88/ark-to-snarkjs"
 homepage = "https://github.com/mysteryon88/ark-to-snarkjs"
 readme = "README.md"
-keywords = ["arkworks", "zk", "groth16", "snarkjs"]
+keywords = ["arkworks", "zk", "groth16", "snarkjs", "garaga"]
 categories = ["cryptography", "encoding", "algorithms"]
 resolver = "2"
 
