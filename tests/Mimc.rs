@@ -170,6 +170,15 @@ where
     let _vk_json =
         ark_snarkjs::export_vk::export_vk::<E, _>(&vk, public_inputs.len(), &vk_path).unwrap();
 
+    // proof.garaga.json
+    let proof_path_garaga = format!("{out_dir}/proof.garaga.json");
+    let _proof_json_garaga = ark_snarkjs::export_proof::export_proof_garaga::<E, _>(
+        &proof,
+        &public_inputs,
+        &proof_path_garaga,
+    )
+    .unwrap();
+
     println!("[{label}] Files saved: {proof_path}, {vk_path}");
 }
 
