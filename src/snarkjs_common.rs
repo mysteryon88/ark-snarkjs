@@ -58,3 +58,23 @@ where
     let (y0, y1) = y.c0_c1();
     [[f_to_dec(x0), f_to_dec(x1)], [f_to_dec(y0), f_to_dec(y1)]]
 }
+
+/// Convert a G1 point to string array [x, y, z] with z=1 (normalized projective).
+pub fn g1_xyz<G>(p: &G) -> [String; 3]
+where
+    G: AffineRepr,
+    G::BaseField: PrimeField,
+{
+    let [x, y] = g1_xy(p);
+    [x, y, "1".to_string()]
+}
+
+/// Convert a G2 point to [[[x0,x1],[y0,y1],[z0,z1]]] with z=(1,0) (normalized projective).
+pub fn g2_xyxy_z<G>(p: &G) -> [[String; 2]; 3]
+where
+    G: AffineRepr,
+    G::BaseField: AsFp2,
+{
+    let [x, y] = g2_xyxy(p);
+    [x, y, ["1".to_string(), "0".to_string()]]
+}

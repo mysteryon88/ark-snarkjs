@@ -5,28 +5,29 @@ use serde::Serialize;
 use serde_json::to_writer_pretty;
 use std::{fs, fs::File, path::Path};
 
-use crate::snarkjs_common::{AsFp2, CurveTag, g1_xy, g2_xyxy};
+use crate::snarkjs_common::{AsFp2, CurveTag, g1_xyz, g2_xyxy_z};
 
-/// JSON structure for Groth16 verifying key in `snarkjs`-compatible format.
+#[allow(non_snake_case)]
 #[derive(Serialize)]
 pub struct VkJson {
-    pub protocol: &'static str, // always "groth16"
-    pub curve: &'static str,    // "bn128" or "bls12381"
-    pub n_public: usize,        // number of public inputs
+    pub protocol: &'static str,
+    pub curve: &'static str,
+    pub nPublic: usize,
 
     #[serde(rename = "vk_alpha_1")]
-    pub vk_alpha_1: [String; 2], // G1 point
+    pub vk_alpha_1: [String; 3],
+
     #[serde(rename = "vk_beta_2")]
-    pub vk_beta_2: [[String; 2]; 2], // G2 point
+    pub vk_beta_2: [[String; 2]; 3],
     #[serde(rename = "vk_gamma_2")]
-    pub vk_gamma_2: [[String; 2]; 2], // G2 point
+    pub vk_gamma_2: [[String; 2]; 3],
     #[serde(rename = "vk_delta_2")]
-    pub vk_delta_2: [[String; 2]; 2], // G2 point
+    pub vk_delta_2: [[String; 2]; 3],
+
     #[serde(rename = "IC")]
-    pub ic: Vec<[String; 2]>, // list of G1 points for input coefficients
+    pub ic: Vec<[String; 3]>,
 }
 
-/// Convert a Groth16 verifying key to `snarkjs` JSON format (in-memory only).
 pub fn vk_to_snarkjs<E>(vk: &VerifyingKey<E>, n_public: usize) -> VkJson
 where
     E: Pairing + CurveTag,
@@ -36,39 +37,36 @@ where
     VkJson {
         protocol: "groth16",
         curve: E::NAME,
-        n_public,
-        vk_alpha_1: g1_xy(&vk.alpha_g1),
-        vk_beta_2: g2_xyxy(&vk.beta_g2),
-        vk_gamma_2: g2_xyxy(&vk.gamma_g2),
-        vk_delta_2: g2_xyxy(&vk.delta_g2),
-        ic: vk.gamma_abc_g1.iter().map(g1_xy).collect(),
+        nPublic: n_public,
+
+        vk_alpha_1: g1_xyz(&vk.alpha_g1),
+        vk_beta_2: g2_xyxy_z(&vk.beta_g2),
+        vk_gamma_2: g2_xyxy_z(&vk.gamma_g2),
+        vk_delta_2: g2_xyxy_z(&vk.delta_g2),
+
+        ic: vk.gamma_abc_g1.iter().map(g1_xyz).collect(),
     }
 }
 
-/// Export a Groth16 verifying key to `snarkjs` JSON format.
-/// Writes the file to `out_path` and returns the in-memory `VkJson`.
 pub fn export_vk<E, P>(
-    vk: &VerifyingKey<E>, // Groth16 verifying key from arkworks
-    n_public: usize,      // number of public inputs
-    out_path: P,          // output path for JSON file
+    vk: &VerifyingKey<E>,
+    n_public: usize,
+    out_path: P,
 ) -> std::io::Result<VkJson>
 where
-    P: AsRef<Path>, // accepts &str, String, Path, PathBuf
+    P: AsRef<Path>,
     E: Pairing + CurveTag,
     <E::G1Affine as ark_ec::AffineRepr>::BaseField: PrimeField,
     <E::G2Affine as ark_ec::AffineRepr>::BaseField: AsFp2,
 {
-    // Build JSON structure in memory
     let json = vk_to_snarkjs::<E>(vk, n_public);
 
-    // Ensure parent directories exist
     if let Some(parent) = out_path.as_ref().parent()
         && !parent.as_os_str().is_empty()
     {
         fs::create_dir_all(parent)?;
     }
 
-    // Write pretty-printed JSON to file
     let file = File::create(out_path)?;
     to_writer_pretty(file, &json).map_err(std::io::Error::other)?;
 
