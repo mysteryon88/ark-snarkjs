@@ -1,0 +1,15 @@
+{
+  "name": "ark-snarkjs-snarkjs-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/snarkjs": "^0.7.9",
+    "snarkjs": "^0.7.6",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
+  }
+}

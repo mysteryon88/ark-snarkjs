@@ -18,7 +18,9 @@ use ark_crypto_primitives::snark::{CircuitSpecificSetupSNARK, SNARK};
 use ark_ff::One;
 use ark_groth16::Groth16;
 use ark_r1cs_std::{alloc::AllocVar, eq::EqGadget, fields::fp::FpVar};
-use ark_relations::r1cs::{ConstraintSynthesizer, ConstraintSystemRef, SynthesisError};
+use ark_relations::gr1cs::{
+    ConstraintSynthesizer, ConstraintSystem, ConstraintSystemRef, SynthesisError,
+};
 use ark_std::rand::{RngCore, SeedableRng};
 use ark_std::test_rng;
 
@@ -87,7 +89,7 @@ mod tests {
         };
 
         // (Optional) check that the R1CS is satisfiable
-        let cs = ark_relations::r1cs::ConstraintSystem::<Fr>::new_ref();
+        let cs = ConstraintSystem::<Fr>::new_ref();
         circuit.clone().generate_constraints(cs.clone()).unwrap();
         cs.finalize();
         assert!(cs.is_satisfied().unwrap(), "[Bn254] R1CS not satisfied");

@@ -24,7 +24,9 @@ use ark_r1cs_std::{
     eq::EqGadget,
     fields::{FieldVar, fp::FpVar},
 };
-use ark_relations::r1cs::{ConstraintSynthesizer, ConstraintSystemRef, SynthesisError};
+use ark_relations::gr1cs::{
+    ConstraintSynthesizer, ConstraintSystem, ConstraintSystemRef, SynthesisError,
+};
 use ark_std::rand::{RngCore, SeedableRng};
 use ark_std::test_rng;
 
@@ -140,7 +142,7 @@ where
         constants: &constants,
     };
 
-    let cs = ark_relations::r1cs::ConstraintSystem::<E::ScalarField>::new_ref();
+    let cs = ConstraintSystem::<E::ScalarField>::new_ref();
     circuit.generate_constraints(cs.clone()).unwrap();
     cs.finalize();
     assert!(cs.is_satisfied().unwrap());
