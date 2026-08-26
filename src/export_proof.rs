@@ -35,18 +35,18 @@ pub struct ProofJsonGaraga {
 fn extract_proof_data<E>(
     proof: &Proof<E>,
     public: &[E::ScalarField],
-) -> ([String; 2], [[String; 2]; 2], [String; 2], Vec<String>)
+) -> std::io::Result<([String; 2], [[String; 2]; 2], [String; 2], Vec<String>)>
 where
     E: Pairing + CurveTag,
     <E::G1Affine as ark_ec::AffineRepr>::BaseField: PrimeField,
     <E::G2Affine as ark_ec::AffineRepr>::BaseField: AsFp2,
     E::ScalarField: PrimeField,
 {
-    let a = g1_xy(&proof.a);
-    let b = g2_xyxy(&proof.b);
-    let c = g1_xy(&proof.c);
+    let a = g1_xy(&proof.a)?;
+    let b = g2_xyxy(&proof.b)?;
+    let c = g1_xy(&proof.c)?;
     let public_signals = public.iter().map(f_to_dec::<E::ScalarField>).collect();
-    (a, b, c, public_signals)
+    Ok((a, b, c, public_signals))
 }
 
 /// Write a serializable JSON structure to a file, creating parent directories if needed.
@@ -82,7 +82,7 @@ where
     <E::G2Affine as ark_ec::AffineRepr>::BaseField: AsFp2,
     E::ScalarField: PrimeField,
 {
-    let (a, b, c, public_signals) = extract_proof_data(proof, public);
+    let (a, b, c, public_signals) = extract_proof_data(proof, public)?;
 
     let json = ProofJson {
         protocol: "groth16",
@@ -115,7 +115,7 @@ where
     <E::G2Affine as ark_ec::AffineRepr>::BaseField: AsFp2,
     E::ScalarField: PrimeField,
 {
-    let (a, b, c, public_signals) = extract_proof_data(proof, public);
+    let (a, b, c, public_signals) = extract_proof_data(proof, public)?;
 
     let json = ProofJsonGaraga {
         protocol: "groth16",

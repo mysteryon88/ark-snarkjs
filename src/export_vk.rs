@@ -28,24 +28,28 @@ pub struct VkJson {
     pub ic: Vec<[String; 3]>,
 }
 
-pub fn vk_to_snarkjs<E>(vk: &VerifyingKey<E>, n_public: usize) -> VkJson
+pub fn vk_to_snarkjs<E>(vk: &VerifyingKey<E>, n_public: usize) -> std::io::Result<VkJson>
 where
     E: Pairing + CurveTag,
     <E::G1Affine as ark_ec::AffineRepr>::BaseField: PrimeField,
     <E::G2Affine as ark_ec::AffineRepr>::BaseField: AsFp2,
 {
-    VkJson {
+    Ok(VkJson {
         protocol: "groth16",
         curve: E::NAME,
         nPublic: n_public,
 
-        vk_alpha_1: g1_xyz(&vk.alpha_g1),
-        vk_beta_2: g2_xyxy_z(&vk.beta_g2),
-        vk_gamma_2: g2_xyxy_z(&vk.gamma_g2),
-        vk_delta_2: g2_xyxy_z(&vk.delta_g2),
+        vk_alpha_1: g1_xyz(&vk.alpha_g1)?,
+        vk_beta_2: g2_xyxy_z(&vk.beta_g2)?,
+        vk_gamma_2: g2_xyxy_z(&vk.gamma_g2)?,
+        vk_delta_2: g2_xyxy_z(&vk.delta_g2)?,
 
-        ic: vk.gamma_abc_g1.iter().map(g1_xyz).collect(),
-    }
+        ic: vk
+            .gamma_abc_g1
+            .iter()
+            .map(g1_xyz)
+            .collect::<std::io::Result<_>>()?,
+    })
 }
 
 pub fn export_vk<E, P>(
@@ -59,7 +63,7 @@ where
     <E::G1Affine as ark_ec::AffineRepr>::BaseField: PrimeField,
     <E::G2Affine as ark_ec::AffineRepr>::BaseField: AsFp2,
 {
-    let json = vk_to_snarkjs::<E>(vk, n_public);
+    let json = vk_to_snarkjs::<E>(vk, n_public)?;
 
     if let Some(parent) = out_path.as_ref().parent()
         && !parent.as_os_str().is_empty()

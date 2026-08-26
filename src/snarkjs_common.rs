@@ -1,6 +1,7 @@
 use ark_ec::AffineRepr;
 use ark_ff::{BigInteger, PrimeField};
 use num_bigint::BigUint;
+use std::io::{Error, ErrorKind, Result};
 
 /// Curve marker used to tag curve type for snarkjs compatibility.
 pub trait CurveTag {
@@ -38,43 +39,47 @@ pub fn f_to_dec<F: PrimeField>(f: &F) -> String {
 }
 
 /// Convert a G1 point to string array [x, y].
-pub fn g1_xy<G>(p: &G) -> [String; 2]
+pub fn g1_xy<G>(p: &G) -> Result<[String; 2]>
 where
     G: AffineRepr,
     G::BaseField: PrimeField,
 {
-    let (x, y) = p.xy().expect("G1 point at infinity?");
-    [f_to_dec(&x), f_to_dec(&y)]
+    let (x, y) = p
+        .xy()
+        .ok_or_else(|| Error::new(ErrorKind::InvalidData, "G1 point at infinity"))?;
+    Ok([f_to_dec(&x), f_to_dec(&y)])
 }
 
 /// Convert a G2 point to nested string array [[x.c0, x.c1], [y.c0, y.c1]].
-pub fn g2_xyxy<G>(p: &G) -> [[String; 2]; 2]
+pub fn g2_xyxy<G>(p: &G) -> Result<[[String; 2]; 2]>
 where
     G: AffineRepr,
     G::BaseField: AsFp2,
 {
-    let (x, y) = p.xy().expect("G2 point at infinity?");
+    let (x, y) = p
+        .xy()
+        .ok_or_else(|| Error::new(ErrorKind::InvalidData, "G2 point at infinity"))?;
     let (x0, x1) = x.c0_c1();
     let (y0, y1) = y.c0_c1();
-    [[f_to_dec(x0), f_to_dec(x1)], [f_to_dec(y0), f_to_dec(y1)]]
+    Ok([[f_to_dec(x0), f_to_dec(x1)], [f_to_dec(y0), f_to_dec(y1)]])
 }
 
 /// Convert a G1 point to string array [x, y, z] with z=1 (normalized projective).
-pub fn g1_xyz<G>(p: &G) -> [String; 3]
+pub fn g1_xyz<G>(p: &G) -> Result<[String; 3]>
 where
     G: AffineRepr,
     G::BaseField: PrimeField,
 {
-    let [x, y] = g1_xy(p);
-    [x, y, "1".to_string()]
+    let [x, y] = g1_xy(p)?;
+    Ok([x, y, "1".to_string()])
 }
 
 /// Convert a G2 point to [[[x0,x1],[y0,y1],[z0,z1]]] with z=(1,0) (normalized projective).
-pub fn g2_xyxy_z<G>(p: &G) -> [[String; 2]; 3]
+pub fn g2_xyxy_z<G>(p: &G) -> Result<[[String; 2]; 3]>
 where
     G: AffineRepr,
     G::BaseField: AsFp2,
 {
-    let [x, y] = g2_xyxy(p);
-    [x, y, ["1".to_string(), "0".to_string()]]
+    let [x, y] = g2_xyxy(p)?;
+    Ok([x, y, ["1".to_string(), "0".to_string()]])
 }
