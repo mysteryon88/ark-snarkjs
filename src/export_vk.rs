@@ -34,6 +34,12 @@ where
     <E::G1Affine as ark_ec::AffineRepr>::BaseField: PrimeField,
     <E::G2Affine as ark_ec::AffineRepr>::BaseField: AsFp2,
 {
+    if n_public.checked_add(1) != Some(vk.gamma_abc_g1.len()) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "n_public must match the verifying key IC length minus one",
+        ));
+    }
     Ok(VkJson {
         protocol: "groth16",
         curve: E::NAME,

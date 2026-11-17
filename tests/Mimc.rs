@@ -13,8 +13,6 @@
     unsafe_code
 )]
 
-use ark_snarkjs;
-
 use ark_crypto_primitives::snark::{CircuitSpecificSetupSNARK, SNARK};
 use ark_ec::{AffineRepr, pairing::Pairing};
 use ark_ff::{Field, PrimeField, UniformRand};
@@ -40,9 +38,9 @@ const MIMC_ROUNDS: usize = 322;
 /// xl, xr and constants operate over F = E::ScalarField for the selected curve E.
 fn mimc<F: Field>(mut xl: F, mut xr: F, constants: &[F]) -> F {
     assert_eq!(constants.len(), MIMC_ROUNDS);
-    for i in 0..MIMC_ROUNDS {
+    for constant in constants {
         let mut tmp1 = xl;
-        tmp1.add_assign(&constants[i]);
+        tmp1.add_assign(constant);
         let mut tmp2 = tmp1;
         tmp2.square_in_place();
         tmp2.mul_assign(&tmp1);

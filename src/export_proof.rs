@@ -31,11 +31,10 @@ pub struct ProofJsonGaraga {
     pub publicSignals: Vec<String>, // array of decimal-encoded public inputs
 }
 
+type ProofData = ([String; 2], [[String; 2]; 2], [String; 2], Vec<String>);
+
 /// Extract proof coordinates and convert public signals to decimal strings.
-fn extract_proof_data<E>(
-    proof: &Proof<E>,
-    public: &[E::ScalarField],
-) -> std::io::Result<([String; 2], [[String; 2]; 2], [String; 2], Vec<String>)>
+fn extract_proof_data<E>(proof: &Proof<E>, public: &[E::ScalarField]) -> std::io::Result<ProofData>
 where
     E: Pairing + CurveTag,
     <E::G1Affine as ark_ec::AffineRepr>::BaseField: PrimeField,
